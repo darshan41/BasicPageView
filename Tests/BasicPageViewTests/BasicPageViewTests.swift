@@ -2,11 +2,64 @@ import XCTest
 @testable import BasicPageView
 
 final class BasicPageViewTests: XCTestCase {
-    func testExample() throws {
-        // XCTest Documentation
-        // https://developer.apple.com/documentation/xctest
+    
+    private lazy var controllers: [UIViewController] = {
+        let controller1 = UIViewController()
+        let controller2 = UIViewController()
+        let controller3 = UIViewController()
+        let controllers: [UIViewController] = [controller1,controller2,controller3]
+        return controllers
+    }()
+    
+    override func setUp() {
+        super.setUp()
+    }
+    
+    private let pageView = BasicPageView()
+    
+    func testDelegatation() {
+        pageView.autoSwipeDelegate = self
+    }
+    
+    func testGoToNextPage() {
+        pageView.goToNextPage()
+    }
+    
+    func testGoToPreviousPage() {
+        pageView.goToPreviousPage()
+    }
+    
+    func testAutoSwipeControlStartTimer() {
+        let autoSwipeControl = BasicAutoPageControl()
+        autoSwipeControl.startTimer()
+    }
+}
 
-        // Defining Test Cases and Test Methods
-        // https://developer.apple.com/documentation/xctest/defining_test_cases_and_test_methods
+// MARK: PageScrollNotifiable
+
+extension BasicPageViewTests: PageScrollNotifiable {
+    
+    func inputControllersForController(_ pageViewController: UIPageViewController) -> [UIViewController] {
+        self.controllers
+    }
+    
+    func swipeIntervalForController(_ pageViewController: UIPageViewController) -> TimeInterval? {
+        2.0
+    }
+    
+    func isCyclicPaginationController(_ pageViewController: UIPageViewController) -> Bool {
+        true
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, shouldMoveTo viewController: UIViewController?) -> Bool {
+        true
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, willMoveTo viewController: UIViewController?) {
+        XCTAssert(viewController != nil)
+    }
+    
+    func pageViewController(_ pageViewController: UIPageViewController, didMoveTo viewController: UIViewController?) {
+        XCTAssert(viewController != nil)
     }
 }
